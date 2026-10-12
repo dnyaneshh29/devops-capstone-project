@@ -3,10 +3,8 @@ Global Configuration for Application
 """
 import os
 
-# Get configuration from environment
 DATABASE_URI = os.getenv("DATABASE_URI")
 
-# Build DATABASE_URI from environment if not found
 if not DATABASE_URI:
     DATABASE_USER = os.getenv("DATABASE_USER", "postgres")
     DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD", "postgres")
@@ -17,6 +15,5 @@ if not DATABASE_URI:
         f"@{DATABASE_HOST}/{DATABASE_NAME}"
     )
 
-# Fallback for CI/CD pipelines (GitHub Actions) when PostgreSQL is not available
 if os.getenv("CI", "false").lower() == "true":
     DATABASE_URI = "sqlite:///:memory:"
