@@ -112,7 +112,11 @@ class Account(db.Model, PersistentBase):
         except KeyError as error:
             raise DataValidationError("Invalid Account: missing " + error.args[0]) from error
         except TypeError as error:
-            raise DataValidationError("Invalid Account: bad or no data - " + error.args[0]) from error
+           raise DataValidationError(
+    "Invalid Account: bad or no data - "
+    + error.args[0]
+) from error
+
         return self
 
     @classmethod
