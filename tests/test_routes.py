@@ -32,7 +32,7 @@ class TestAccountService(TestCase):
     @classmethod
     def tearDownClass(cls):
         """Tear down test class"""
-        pass
+        # Removed unnecessary pass
 
     def setUp(self):
         """Set up before each test"""
