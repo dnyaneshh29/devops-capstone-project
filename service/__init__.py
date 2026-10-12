@@ -6,7 +6,7 @@ import sys
 from flask import Flask
 from flask_talisman import Talisman
 from flask_cors import CORS
-from service import config, routes, models
+from service import config, models
 from service.common import log_handlers, error_handlers, cli_commands
 
 # Create Flask application
@@ -33,3 +33,6 @@ except Exception as error:  # pylint: disable=broad-except
     sys.exit(4)
 
 app.logger.info("Service initialized!")
+
+# Import routes after app is created to avoid circular import
+import service.routes  # noqa: E402
