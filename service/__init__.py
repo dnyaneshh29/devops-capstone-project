@@ -15,8 +15,10 @@ from service.common import log_handlers
 app = Flask(__name__)
 app.config.from_object(config)
 
-# Initialize Flask-Talisman and Flask-CORS for security headers
-talisman = Talisman(app)
+# Initialize Flask-Talisman (disable force_https for test environments)
+talisman = Talisman(app, force_https=False)
+
+# Initialize Flask-CORS for security headers
 CORS(app)
 
 # Import the routes After the Flask app is created
