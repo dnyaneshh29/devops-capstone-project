@@ -90,6 +90,7 @@ class Account(db.Model, PersistentBase):
         """String representation"""
         return f"<Account {self.name} id=[{self.id}]>"
 
+
     def serialize(self):
         """Serialize Account to dict"""
         return {
