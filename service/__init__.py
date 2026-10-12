@@ -32,7 +32,11 @@ except Exception as error:  # pylint: disable=broad-except
     app.logger.critical("%s: Cannot continue", error)
     sys.exit(4)
 
-app.logger.info("Service initialized!")
+# Register error handlers and CLI commands
+error_handlers.init_error_handlers(app)
+cli_commands.init_cli(app)
 
 # Import routes after app is created to avoid circular import
 import service.routes  # noqa: E402
+
+app.logger.info("Service initialized!")
