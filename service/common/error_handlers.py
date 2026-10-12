@@ -1,73 +1,18 @@
 """
-Error Handlers
+Error Handlers for the Account Service
 """
-from flask import jsonify
-from service.models import DataValidationError
-from service import app
-from . import status
 
+def init_error_handlers(app):
+    """Register error handlers with the Flask app"""
 
-@app.errorhandler(DataValidationError)
-def request_validation_error(error):
-    """Handle DataValidationError"""
-    return bad_request(error)
+    @app.errorhandler(404)
+    def not_found(error):
+        return {"error": "Not Found"}, 404
 
+    @app.errorhandler(400)
+    def bad_request(error):
+        return {"error": "Bad Request"}, 400
 
-@app.errorhandler(status.HTTP_400_BAD_REQUEST)
-def bad_request(error):
-    """Handle 400 Bad Request"""
-    message = str(error)
-    app.logger.warning(message)
-    return (
-        jsonify(
-            status=status.HTTP_400_BAD_REQUEST,
-            error="Bad Request",
-            message=message,
-        ),
-        status.HTTP_400_BAD_REQUEST,
-    )
-
-
-@app.errorhandler(status.HTTP_404_NOT_FOUND)
-def not_found(error):
-    """Handle 404 Not Found"""
-    message = str(error)
-    app.logger.warning(message)
-    return (
-        jsonify(
-            status=status.HTTP_404_NOT_FOUND,
-            error="Not Found",
-            message=message,
-        ),
-        status.HTTP_404_NOT_FOUND,
-    )
-
-
-@app.errorhandler(status.HTTP_405_METHOD_NOT_ALLOWED)
-def method_not_supported(error):
-    """Handle 405 Method Not Allowed"""
-    message = str(error)
-    app.logger.warning(message)
-    return (
-        jsonify(
-            status=status.HTTP_405_METHOD_NOT_ALLOWED,
-            error="Method Not Allowed",
-            message=message,
-        ),
-        status.HTTP_405_METHOD_NOT_ALLOWED,
-    )
-
-
-@app.errorhandler(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-def mediatype_not_supported(error):
-    """Handle 415 Unsupported Media Type"""
-    message = str(error)
-    app.logger.warning(message)
-    return (
-        jsonify(
-            status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-            error="Unsupported Media Type",
-            message=message,
-        ),
-        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-    )
+    @app.errorhandler(415)
+    def unsupported_media_type(error):
+        return {"error": "Unsupported Media Type"}, 415
