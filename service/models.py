@@ -14,7 +14,7 @@ db = SQLAlchemy()
 
 
 class DataValidationError(Exception):
-    """Used for an data validation errors when deserializing"""
+    """Used for data validation errors when deserializing"""
 
 
 def init_db(app):
@@ -32,24 +32,20 @@ class PersistentBase:
         self.id = None  # pylint: disable=invalid-name
 
     def create(self):
-        """
-        Creates a Account to the database
-        """
-        logger.info("Creating %s", self.name)
-        self.id = None  # id must be none to generate next primary key
+        """Creates an Account in the database"""
+        logger.info("Creating %s", getattr(self, "name", None))
+        self.id = None
         db.session.add(self)
         db.session.commit()
 
     def update(self):
-        """
-        Updates a Account to the database
-        """
-        logger.info("Updating %s", self.name)
+        """Updates an Account in the database"""
+        logger.info("Updating %s", getattr(self, "name", None))
         db.session.commit()
 
     def delete(self):
-        """Removes a Account from the data store"""
-        logger.info("Deleting %s", self.name)
+        """Removes an Account from the data store"""
+        logger.info("Deleting %s", getattr(self, "name", None))
         db.session.delete(self)
         db.session.commit()
 
@@ -58,10 +54,9 @@ class PersistentBase:
         """Initializes the database session"""
         logger.info("Initializing database")
         cls.app = app
-        # This is where we initialize SQLAlchemy from the Flask app
         db.init_app(app)
         app.app_context().push()
-        db.create_all()  # make our sqlalchemy tables
+        db.create_all()
 
     @classmethod
     def all(cls):
@@ -71,7 +66,7 @@ class PersistentBase:
 
     @classmethod
     def find(cls, by_id):
-        """Finds a record by it's ID"""
+        """Finds a record by its ID"""
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
 
@@ -91,14 +86,23 @@ class Account(db.Model, PersistentBase):
     name = db.Column(db.String(64))
     email = db.Column(db.String(64))
     address = db.Column(db.String(256))
-    phone_number = db.Column(db.String(32), nullable=True)  # phone number is optional
+    phone_number = db.Column(db.String(32), nullable=True)
     date_joined = db.Column(db.Date(), nullable=False, default=date.today())
+
+    def __init__(self, name=None, email=None, address=None,
+                 phone_number=None, date_joined=None):
+        """Constructor to allow keyword arguments"""
+        self.name = name
+        self.email = email
+        self.address = address
+        self.phone_number = phone_number
+        self.date_joined = date_joined or date.today()
 
     def __repr__(self):
         return f"<Account {self.name} id=[{self.id}]>"
 
     def serialize(self):
-        """Serializes a Account into a dictionary"""
+        """Serializes an Account into a dictionary"""
         return {
             "id": self.id,
             "name": self.name,
@@ -109,12 +113,7 @@ class Account(db.Model, PersistentBase):
         }
 
     def deserialize(self, data):
-        """
-        Deserializes a Account from a dictionary
-
-        Args:
-            data (dict): A dictionary containing the resource data
-        """
+        """Deserializes an Account from a dictionary"""
         try:
             self.name = data["name"]
             self.email = data["email"]
@@ -129,17 +128,12 @@ class Account(db.Model, PersistentBase):
             raise DataValidationError("Invalid Account: missing " + error.args[0]) from error
         except TypeError as error:
             raise DataValidationError(
-                "Invalid Account: body of request contained "
-                "bad or no data - " + error.args[0]
+                "Invalid Account: body of request contained bad or no data - " + error.args[0]
             ) from error
         return self
 
     @classmethod
     def find_by_name(cls, name):
-        """Returns all Accounts with the given name
-
-        Args:
-            name (string): the name of the Accounts you want to match
-        """
+        """Returns all Accounts with the given name"""
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
