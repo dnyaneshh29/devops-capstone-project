@@ -1,22 +1,25 @@
 """
 Package: service
+Creates and configures the Flask app and sets up logging and SQL database
 """
 import sys
 from flask import Flask
 from flask_talisman import Talisman
 from flask_cors import CORS
-from service import config
-from service.common import log_handlers
+from service import config, routes, models
+from service.common import log_handlers, error_handlers, cli_commands
 
+# Create Flask application
 app = Flask(__name__)
 app.config.from_object(config)
 
+# Initialize Flask-Talisman (disable force_https for test environments)
 talisman = Talisman(app, force_https=False)
+
+# Initialize Flask-CORS
 CORS(app)
 
-from service import routes, models  # noqa: F401 E402
-from service.common import error_handlers, cli_commands  # noqa: F401 E402
-
+# Set up logging
 log_handlers.init_logging(app, "gunicorn.error")
 
 app.logger.info("*" * 70)
