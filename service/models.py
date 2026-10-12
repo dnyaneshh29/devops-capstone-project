@@ -90,8 +90,9 @@ class Account(db.Model, PersistentBase):
     date_joined = db.Column(db.Date(), nullable=False, default=date.today())
 
     def __init__(self, name=None, email=None, address=None,
-                 phone_number=None, date_joined=None):
+                 phone_number=None, date_joined=None):  # pylint: disable=too-many-arguments
         """Constructor to allow keyword arguments"""
+        super().__init__()  # call PersistentBase.__init__
         self.name = name
         self.email = email
         self.address = address
