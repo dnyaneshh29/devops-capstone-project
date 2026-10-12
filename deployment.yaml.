@@ -1,3 +1,4 @@
+cat <<'EOF' > deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,6 +18,9 @@ spec:
       containers:
       - name: accounts
         image: postgres:alpine
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "postgres"
         ports:
         - containerPort: 5432
 ---
@@ -31,3 +35,4 @@ spec:
     targetPort: 5432
   selector:
     app: accounts
+EOF
