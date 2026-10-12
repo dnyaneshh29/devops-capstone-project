@@ -75,15 +75,17 @@ class Account(db.Model, PersistentBase):
     phone_number = db.Column(db.String(32), nullable=True)
     date_joined = db.Column(db.Date(), nullable=False, default=date.today())
 
-    def __init__(self, name=None, email=None, address=None,
-                 phone_number=None, date_joined=None):  # pylint: disable=too-many-arguments
-        """Initialize Account with fields"""
-        super().__init__()
-        self.name = name
-        self.email = email
-        self.address = address
-        self.phone_number = phone_number
-        self.date_joined = date_joined or date.today()
+    def __init__(self, id=None, name=None, email=None, address=None,
+             phone_number=None, date_joined=None):  # pylint: disable=too-many-arguments
+    """Initialize Account with fields"""
+    super().__init__()
+    self.id = id
+    self.name = name
+    self.email = email
+    self.address = address
+    self.phone_number = phone_number
+    self.date_joined = date_joined or date.today()
+
 
     def __repr__(self):
         """String representation"""
