@@ -2,9 +2,9 @@
 Account Service Routes
 """
 from flask import jsonify, request, make_response, abort, url_for
+from service import app
 from service.models import Account
 from service.common import status
-from . import app
 
 
 @app.route("/health")
