@@ -19,28 +19,33 @@ def init_db(app):
 
 
 class PersistentBase:
-    """Base class added persistent methods"""
+    """Base class with persistent methods"""
 
     def __init__(self):
+        """Initialize base with id"""
         self.id = None  # pylint: disable=invalid-name
 
     def create(self):
+        """Create an Account in the database"""
         logger.info("Creating %s", getattr(self, "name", None))
         self.id = None
         db.session.add(self)
         db.session.commit()
 
     def update(self):
+        """Update an Account in the database"""
         logger.info("Updating %s", getattr(self, "name", None))
         db.session.commit()
 
     def delete(self):
+        """Delete an Account from the database"""
         logger.info("Deleting %s", getattr(self, "name", None))
         db.session.delete(self)
         db.session.commit()
 
     @classmethod
     def init_db(cls, app):
+        """Initialize the database session"""
         logger.info("Initializing database")
         cls.app = app
         db.init_app(app)
@@ -49,10 +54,12 @@ class PersistentBase:
 
     @classmethod
     def all(cls):
+        """Return all records"""
         return cls.query.all()
 
     @classmethod
     def find(cls, by_id):
+        """Find a record by ID"""
         return cls.query.get(by_id)
 
 
@@ -70,6 +77,7 @@ class Account(db.Model, PersistentBase):
 
     def __init__(self, name=None, email=None, address=None,
                  phone_number=None, date_joined=None):  # pylint: disable=too-many-arguments
+        """Initialize Account with fields"""
         super().__init__()
         self.name = name
         self.email = email
@@ -78,9 +86,11 @@ class Account(db.Model, PersistentBase):
         self.date_joined = date_joined or date.today()
 
     def __repr__(self):
+        """String representation"""
         return f"<Account {self.name} id=[{self.id}]>"
 
     def serialize(self):
+        """Serialize Account to dict"""
         return {
             "id": self.id,
             "name": self.name,
@@ -91,6 +101,7 @@ class Account(db.Model, PersistentBase):
         }
 
     def deserialize(self, data):
+        """Deserialize Account from dict"""
         try:
             self.name = data["name"]
             self.email = data["email"]
@@ -101,11 +112,10 @@ class Account(db.Model, PersistentBase):
         except KeyError as error:
             raise DataValidationError("Invalid Account: missing " + error.args[0]) from error
         except TypeError as error:
-            raise DataValidationError(
-                "Invalid Account: bad or no data - " + error.args[0]
-            ) from error
+            raise DataValidationError("Invalid Account: bad or no data - " + error.args[0]) from error
         return self
 
     @classmethod
     def find_by_name(cls, name):
+        """Find Accounts by name"""
         return cls.query.filter(cls.name == name)
