@@ -76,16 +76,15 @@ class Account(db.Model, PersistentBase):
     date_joined = db.Column(db.Date(), nullable=False, default=date.today())
 
     def __init__(self, id=None, name=None, email=None, address=None,
-             phone_number=None, date_joined=None):  # pylint: disable=too-many-arguments
-    """Initialize Account with fields"""
-    super().__init__()
-    self.id = id
-    self.name = name
-    self.email = email
-    self.address = address
-    self.phone_number = phone_number
-    self.date_joined = date_joined or date.today()
-
+                 phone_number=None, date_joined=None):  # pylint: disable=too-many-arguments
+        """Initialize Account with fields"""
+        super().__init__()
+        self.id = id
+        self.name = name
+        self.email = email
+        self.address = address
+        self.phone_number = phone_number
+        self.date_joined = date_joined or date.today()
 
     def __repr__(self):
         """String representation"""
@@ -119,12 +118,6 @@ class Account(db.Model, PersistentBase):
             ) from error
         except TypeError as error:
             raise DataValidationError(
-                "Invalid Account: bad or no data - "
-                + error.args[0]
+                "Invalid Account: bad or no data - " + error.args[0]
             ) from error
         return self
-
-    @classmethod
-    def find_by_name(cls, name):
-        """Find Accounts by name"""
-        return cls.query.filter(cls.name == name)
