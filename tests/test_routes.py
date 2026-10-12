@@ -1,3 +1,4 @@
+# pylint: disable=cyclic-import
 """
 Account API Service Test Suite
 """
@@ -21,6 +22,7 @@ class TestAccountService(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Set up test class"""
         app.config["TESTING"] = True
         app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
@@ -29,17 +31,21 @@ class TestAccountService(TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        """Tear down test class"""
         pass
 
     def setUp(self):
+        """Set up before each test"""
         db.session.query(Account).delete()
         db.session.commit()
         self.client = app.test_client()
 
     def tearDown(self):
+        """Clean up after each test"""
         db.session.remove()
 
     def _create_accounts(self, count):
+        """Helper to create accounts"""
         accounts = []
         for _ in range(count):
             account = AccountFactory()
@@ -55,16 +61,19 @@ class TestAccountService(TestCase):
         return accounts
 
     def test_index(self):
+        """Test index endpoint returns 200"""
         response = self.client.get("/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_health(self):
+        """Test health endpoint returns OK"""
         resp = self.client.get("/health")
         self.assertEqual(resp.status_code, 200)
         data = resp.get_json()
         self.assertEqual(data["status"], "OK")
 
     def test_create_account(self):
+        """Test creating a new account"""
         account = AccountFactory()
         response = self.client.post(
             BASE_URL,
@@ -82,10 +91,12 @@ class TestAccountService(TestCase):
         self.assertEqual(new_account["date_joined"], str(account.date_joined))
 
     def test_bad_request(self):
+        """Test bad request returns 400"""
         response = self.client.post(BASE_URL, json={"name": "not enough data"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_unsupported_media_type(self):
+        """Test unsupported media type returns 415"""
         account = AccountFactory()
         response = self.client.post(
             BASE_URL,
