@@ -16,3 +16,7 @@ if not DATABASE_URI:
         f"postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}"
         f"@{DATABASE_HOST}/{DATABASE_NAME}"
     )
+
+# Fallback for CI/CD pipelines (GitHub Actions) when PostgreSQL is not available
+if os.getenv("CI", "false").lower() == "true" and not DATABASE_URI:
+    DATABASE_URI = "sqlite:///:memory:"
