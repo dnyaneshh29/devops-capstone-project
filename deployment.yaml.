@@ -1,4 +1,4 @@
-cat <<'EOF' > deployment.yaml
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,4 +35,3 @@ spec:
     targetPort: 5432
   selector:
     app: accounts
-EOF
